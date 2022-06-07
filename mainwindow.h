@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "pdfutil.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,7 +17,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
+private slots:
+    void generatePDF();
+
+
 private:
     Ui::MainWindow *ui;
+    PDFUtil pdfUtil;
 };
 #endif // MAINWINDOW_H

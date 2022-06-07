@@ -10,10 +10,12 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    pdfutil.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    pdfutil.h
 
 FORMS += \
     mainwindow.ui
@@ -27,3 +29,12 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+
+
+INCLUDEPATH += $$PWD/../../C/libharu/include
+INCLUDEPATH += $$PWD/../../C/libharu/build_mac/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../C/libharu/build_mac/src -lhpdf
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../qt-smartcard/debug/ -lqt-smartcard
+else:unix: LIBS += -L$$PWD/../../C/libharu/build_mac/src -lhpdf
