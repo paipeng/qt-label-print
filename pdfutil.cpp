@@ -105,6 +105,7 @@ draw_image (HPDF_Doc     pdf,
     else {
         HPDF_Page_DrawImage(page, image, x, y, HPDF_Image_GetWidth(image)*72.0/dpi, HPDF_Image_GetHeight(image)*72.0/dpi);
     }
+#if 0
     /* Print the text. */
     HPDF_Page_BeginText (page);
     HPDF_Page_SetTextLeading (page, 16);
@@ -112,6 +113,7 @@ draw_image (HPDF_Doc     pdf,
     HPDF_Page_ShowTextNextLine (page, filename);
     HPDF_Page_ShowTextNextLine (page, print_text);
     HPDF_Page_EndText (page);
+#endif
 }
 
 
@@ -126,6 +128,7 @@ int PDFUtil::generatePdf(QString data) {
     HPDF_Doc  pdf;
     HPDF_Font font;
     HPDF_Page page;
+    HPDF_Destination dst;
     char fname[256];
 
     float tw;
@@ -186,22 +189,32 @@ int PDFUtil::generatePdf(QString data) {
     HPDF_Page_SetWidth(page, 50 * mm_inch * 72);
     HPDF_Page_SetHeight(page, 30 * mm_inch * 72);
 
+    /*
+    double pageWidth = HPDF_Page_GetWidth(page);
+    double pageHeight = HPDF_Page_GetHeight(page);
+    printf("pdf A4 page size: %f-%f\n", pageWidth, pageHeight);
+    dst = HPDF_Page_CreateDestination (page);
+    HPDF_Destination_SetXYZ (dst, 0, HPDF_Page_GetHeight (page), 1);
+    HPDF_SetOpenAction(pdf, dst);
+    */
+
     /* draw grid to the page */
     //print_grid  (pdf, page);
 
     // print the lines of the page.
+    /*
     HPDF_Page_SetLineWidth (page, 1);
     HPDF_Page_Rectangle (page, 5, 5, HPDF_Page_GetWidth(page) - 10,
                 HPDF_Page_GetHeight (page) - 10);
     HPDF_Page_Stroke (page);
-
+    */
 
     /* print the title of the page (with positioning center). */
     HPDF_Page_SetFontAndSize (page, font, 12);
     tw = HPDF_Page_TextWidth (page, page_title);
     HPDF_Page_BeginText (page);
     HPDF_Page_TextOut (page, (HPDF_Page_GetWidth(page) - tw) / 2,
-                HPDF_Page_GetHeight (page) - 20, page_title);
+                HPDF_Page_GetHeight (page) - 12, page_title);
     HPDF_Page_EndText (page);
 
     HPDF_Page_BeginText (page);
@@ -224,8 +237,7 @@ int PDFUtil::generatePdf(QString data) {
         /* measure the number of characters which included in the page. */
         const char *samp_text = data.toStdString().data();
         strcpy(buf, samp_text);
-        len = HPDF_Page_MeasureText (page, samp_text,
-                        HPDF_Page_GetWidth(page) - 120, HPDF_FALSE, NULL);
+        len = HPDF_Page_MeasureText (page, samp_text, HPDF_Page_GetWidth(page) - 120, HPDF_FALSE, NULL);
 
         /* truncate the text. */
         buf[len] = 0x00;
@@ -248,7 +260,7 @@ int PDFUtil::generatePdf(QString data) {
 
     HPDF_Page_EndText (page);
 
-    draw_image (pdf, "ABCD1234.png", 50, HPDF_Page_GetHeight (page) - 150, 600,"1bit grayscale.");
+    draw_image (pdf, "ABCD1234.bmp", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
 
 
     /* save the document to a file */
