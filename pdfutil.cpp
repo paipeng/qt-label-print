@@ -117,6 +117,24 @@ draw_image (HPDF_Doc     pdf,
 }
 
 
+
+void
+draw_line  (HPDF_Page    page,
+            float        x1,
+            float        y1,
+            float        x2,
+            float        y2,
+            float           width)
+{
+    HPDF_Page_SetLineWidth (page, width);
+
+    HPDF_Page_MoveTo (page, x1, y1);
+    HPDF_Page_LineTo (page, x2, y2);
+    HPDF_Page_Stroke (page);
+}
+
+
+
 PDFUtil::PDFUtil()
 {
 
@@ -210,11 +228,11 @@ int PDFUtil::generatePdf(QString data) {
     */
 
     /* print the title of the page (with positioning center). */
-    HPDF_Page_SetFontAndSize (page, font, 12);
+    HPDF_Page_SetFontAndSize (page, font, 10);
     tw = HPDF_Page_TextWidth (page, page_title);
     HPDF_Page_BeginText (page);
     HPDF_Page_TextOut (page, (HPDF_Page_GetWidth(page) - tw) / 2,
-                HPDF_Page_GetHeight (page) - 12, page_title);
+                HPDF_Page_GetHeight (page) - 10, page_title);
     HPDF_Page_EndText (page);
 
     HPDF_Page_BeginText (page);
@@ -260,7 +278,18 @@ int PDFUtil::generatePdf(QString data) {
 
     HPDF_Page_EndText (page);
 
-    draw_image (pdf, "ABCD1234.bmp", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
+
+    //draw_image (pdf, "ABCD1234.bmp", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
+
+    draw_image (pdf, "DE22D4049EDA4886BD9C25AF255A4D6F.png", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
+
+    draw_line(page, 5,5,5, HPDF_Page_GetHeight (page) -5, 1);
+    draw_line(page, HPDF_Page_GetWidth(page) - 5, 5,HPDF_Page_GetWidth(page) - 5, HPDF_Page_GetHeight (page) -5, 1);
+
+    draw_line(page, 5,5,  HPDF_Page_GetWidth(page) - 5,  5, 1);
+
+    draw_line(page, 5, HPDF_Page_GetHeight (page) -5, (HPDF_Page_GetWidth(page) - tw) / 2 -5, HPDF_Page_GetHeight (page) -5, 1);
+    draw_line(page, (HPDF_Page_GetWidth(page) - tw) / 2 + tw +5, HPDF_Page_GetHeight (page) -5, HPDF_Page_GetWidth(page) - 5, HPDF_Page_GetHeight (page) -5, 1);
 
 
     /* save the document to a file */
