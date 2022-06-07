@@ -77,8 +77,7 @@ int PDFUtil::generatePdf(QString data) {
         HPDF_Page page;
         char fname[256];
 
-        const char* samp_text = "abcdefgABCDEFG123!#$%&+-@?";
-        const char* samp_text2 = "The quick brown fox jumps over the lazy dog.";
+        const char* samp_text = "abcdef";
         float tw;
         float fsize;
         int i;
@@ -115,10 +114,9 @@ int PDFUtil::generatePdf(QString data) {
 
     #if 1
         /* create default-font */
-        HPDF_UseCNSFonts(pdf);
-        HPDF_UseCNSEncodings(pdf);
-        font = HPDF_GetFont (pdf, "SimSun", "GB-EUC-H");
-        //font = HPDF_GetFont(pdf, "SimHei,BoldItalic", "GB-EUC-H");
+        /* create default-font */
+        font = HPDF_GetFont (pdf, "Helvetica", NULL);
+
     #else
         HPDF_UseCNSFonts(pdf);
         HPDF_UseCNSEncodings(pdf);
@@ -131,6 +129,7 @@ int PDFUtil::generatePdf(QString data) {
 
         /* add a new page object. */
         page = HPDF_AddPage (pdf);
+        HPDF_Page_SetSize (page, HPDF_PAGE_SIZE_A5, HPDF_PAGE_LANDSCAPE);
 
         /* draw grid to the page */
         //print_grid  (pdf, page);
@@ -190,204 +189,6 @@ int PDFUtil::generatePdf(QString data) {
             fsize *= 1.5;
         }
 
-        /*
-         * font color
-         */
-        HPDF_Page_SetFontAndSize(page, font, 8);
-        HPDF_Page_MoveTextPos (page, 0, -30);
-        HPDF_Page_ShowText (page, "Font color");
-
-        HPDF_Page_SetFontAndSize (page, font, 18);
-        HPDF_Page_MoveTextPos (page, 0, -20);
-        len = strlen (samp_text);
-        for (i = 0; i < len; i++) {
-            char buf[2];
-            float r = (float)i / (float)len;
-            float g = 1 - ((float)i / (float)len);
-            buf[0] = samp_text[i];
-            buf[1] = 0x00;
-
-            HPDF_Page_SetRGBFill (page, r, g, 0.0);
-            HPDF_Page_ShowText (page, buf);
-        }
-        HPDF_Page_MoveTextPos (page, 0, -25);
-
-        for (i = 0; i < len; i++) {
-            char buf[2];
-            float r = (float)i / (float)len;
-            float b = 1 - ((float)i / (float)len);
-            buf[0] = samp_text[i];
-            buf[1] = 0x00;
-
-            HPDF_Page_SetRGBFill (page, r, 0.0, b);
-            HPDF_Page_ShowText (page, buf);
-        }
-        HPDF_Page_MoveTextPos (page, 0, -25);
-
-        for (i = 0; i < len; i++) {
-            char buf[2];
-            float b = (float)i / (float)len;
-            float g = 1 - ((float)i / (float)len);
-            buf[0] = samp_text[i];
-            buf[1] = 0x00;
-
-            HPDF_Page_SetRGBFill (page, 0.0, g, b);
-            HPDF_Page_ShowText (page, buf);
-        }
-
-        HPDF_Page_EndText (page);
-
-        ypos = 450;
-
-        /*
-         * Font rendering mode
-         */
-        HPDF_Page_SetFontAndSize(page, font, 32);
-        HPDF_Page_SetRGBFill (page, 0.5, 0.5, 0.0);
-        HPDF_Page_SetLineWidth (page, 1.5);
-
-         /* PDF_FILL */
-        show_description (page,  60, ypos,
-                    "RenderingMode=PDF_FILL");
-        HPDF_Page_SetTextRenderingMode (page, HPDF_FILL);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos, "ABCabc123 ");
-        HPDF_Page_EndText (page);
-
-        /* PDF_STROKE */
-        show_description (page, 60, ypos - 50,
-                    "RenderingMode=PDF_STROKE");
-        HPDF_Page_SetTextRenderingMode (page, HPDF_STROKE);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos - 50, "ABCabc123");
-        HPDF_Page_EndText (page);
-
-        /* PDF_FILL_THEN_STROKE */
-        show_description (page, 60, ypos - 100,
-                    "RenderingMode=PDF_FILL_THEN_STROKE");
-        HPDF_Page_SetTextRenderingMode (page, HPDF_FILL_THEN_STROKE);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos - 100, "ABCabc123");
-        HPDF_Page_EndText (page);
-
-        /* PDF_FILL_CLIPPING */
-        show_description (page, 60, ypos - 150,
-                    "RenderingMode=PDF_FILL_CLIPPING");
-        HPDF_Page_GSave (page);
-        HPDF_Page_SetTextRenderingMode (page, HPDF_FILL_CLIPPING);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos - 150, "ABCabc123");
-        HPDF_Page_EndText (page);
-        show_stripe_pattern (page, 60, ypos - 150);
-        HPDF_Page_GRestore (page);
-
-        /* PDF_STROKE_CLIPPING */
-        show_description (page, 60, ypos - 200,
-                    "RenderingMode=PDF_STROKE_CLIPPING");
-        HPDF_Page_GSave (page);
-        HPDF_Page_SetTextRenderingMode (page, HPDF_STROKE_CLIPPING);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos - 200, "ABCabc123");
-        HPDF_Page_EndText (page);
-        show_stripe_pattern (page, 60, ypos - 200);
-        HPDF_Page_GRestore (page);
-
-        /* PDF_FILL_STROKE_CLIPPING */
-        show_description (page, 60, ypos - 250,
-                    "RenderingMode=PDF_FILL_STROKE_CLIPPING");
-        HPDF_Page_GSave (page);
-        HPDF_Page_SetTextRenderingMode (page, HPDF_FILL_STROKE_CLIPPING);
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, ypos - 250, "ABCabc123");
-        HPDF_Page_EndText (page);
-        show_stripe_pattern (page, 60, ypos - 250);
-        HPDF_Page_GRestore (page);
-
-        /* Reset text attributes */
-        HPDF_Page_SetTextRenderingMode (page, HPDF_FILL);
-        HPDF_Page_SetRGBFill (page, 0, 0, 0);
-        HPDF_Page_SetFontAndSize(page, font, 30);
-
-
-        /*
-         * Rotating text
-         */
-        angle1 = 30;                   /* A rotation of 30 degrees. */
-        rad1 = angle1 / 180 * 3.141592; /* Calcurate the radian value. */
-
-        show_description (page, 320, ypos - 60, "Rotating text");
-        HPDF_Page_BeginText (page);
-        HPDF_Page_SetTextMatrix (page, cos(rad1), sin(rad1), -sin(rad1), cos(rad1),
-                    330, ypos - 60);
-        HPDF_Page_ShowText (page, "ABCabc123");
-        HPDF_Page_EndText (page);
-
-
-        /*
-         * Skewing text.
-         */
-        show_description (page, 320, ypos - 120, "Skewing text");
-        HPDF_Page_BeginText (page);
-
-        angle1 = 10;
-        angle2 = 20;
-        rad1 = angle1 / 180 * 3.141592;
-        rad2 = angle2 / 180 * 3.141592;
-
-        HPDF_Page_SetTextMatrix (page, 1, tan(rad1), tan(rad2), 1, 320, ypos - 120);
-        HPDF_Page_ShowText (page, "ABCabc123");
-        HPDF_Page_EndText (page);
-
-
-        /*
-         * scaling text (X direction)
-         */
-        show_description (page, 320, ypos - 175, "Scaling text (X direction)");
-        HPDF_Page_BeginText (page);
-        HPDF_Page_SetTextMatrix (page, 1.5, 0, 0, 1, 320, ypos - 175);
-        HPDF_Page_ShowText (page, "ABCabc12");
-        HPDF_Page_EndText (page);
-
-
-        /*
-         * scaling text (Y direction)
-         */
-        show_description (page, 320, ypos - 250, "Scaling text (Y direction)");
-        HPDF_Page_BeginText (page);
-        HPDF_Page_SetTextMatrix (page, 1, 0, 0, 2, 320, ypos - 250);
-        HPDF_Page_ShowText (page, "ABCabc123");
-        HPDF_Page_EndText (page);
-
-
-        /*
-         * char spacing, word spacing
-         */
-
-        show_description (page, 60, 140, "char-spacing 0");
-        show_description (page, 60, 100, "char-spacing 1.5");
-        show_description (page, 60, 60, "char-spacing 1.5, word-spacing 2.5");
-
-        HPDF_Page_SetFontAndSize (page, font, 20);
-        HPDF_Page_SetRGBFill (page, 0.1, 0.3, 0.1);
-
-        /* char-spacing 0 */
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, 140, samp_text2);
-        HPDF_Page_EndText (page);
-
-        /* char-spacing 1.5 */
-        HPDF_Page_SetCharSpace (page, 1.5);
-
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, 100, samp_text2);
-        HPDF_Page_EndText (page);
-
-        /* char-spacing 1.5, word-spacing 3.5 */
-        HPDF_Page_SetWordSpace (page, 2.5);
-
-        HPDF_Page_BeginText (page);
-        HPDF_Page_TextOut (page, 60, 60, samp_text2);
-        HPDF_Page_EndText (page);
 
         /* save the document to a file */
         HPDF_SaveToFile (pdf, fname);
