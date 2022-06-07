@@ -138,12 +138,12 @@ int PDFUtil::generatePdf(QString data) {
     /* draw grid to the page */
     //print_grid  (pdf, page);
 
-    /* print the lines of the page.
+    // print the lines of the page.
     HPDF_Page_SetLineWidth (page, 1);
-    HPDF_Page_Rectangle (page, 50, 50, HPDF_Page_GetWidth(page) - 100,
-                HPDF_Page_GetHeight (page) - 110);
+    HPDF_Page_Rectangle (page, 5, 5, HPDF_Page_GetWidth(page) - 10,
+                HPDF_Page_GetHeight (page) - 10);
     HPDF_Page_Stroke (page);
-    */
+
 
     /* print the title of the page (with positioning center). */
     HPDF_Page_SetFontAndSize (page, font, 12);
