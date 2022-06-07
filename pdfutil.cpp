@@ -7,7 +7,7 @@
 #include <setjmp.h>
 
 #include "hpdf.h"
-
+#include <QDebug>
 
 jmp_buf env;
 
@@ -61,6 +61,57 @@ show_description  (HPDF_Page          page,
 
     HPDF_Page_SetFontAndSize (page, font, fsize);
     HPDF_Page_SetRGBFill (page, c.r, c.g, c.b);
+}
+
+
+void
+draw_image (HPDF_Doc     pdf,
+            const char  *filename,
+            float        x,
+            float        y,
+            float       dpi,
+            const char  *text)
+{
+#ifdef __WIN32__
+    const char* FILE_SEPARATOR = "\\";
+#else
+    const char* FILE_SEPARATOR = "/";
+#endif
+    char filename1[255];
+    char print_text[256];
+
+    HPDF_Page page = HPDF_GetCurrentPage (pdf);
+    HPDF_Image image;
+
+    memset(filename1, 0, sizeof(char)*255);
+    strcpy(filename1, "/Users/paipeng/Downloads/");
+    strcat(filename1, filename);
+    printf("filename1: %s\n", filename1);
+    qDebug() << "filename1: " << filename1;
+
+    if (strstr(filename, ".bmp")) {
+        image = HPDF_LoadBmpImageFromFile(pdf, filename1);
+    } else {
+        image = HPDF_LoadPngImageFromFile(pdf, filename1);
+    }
+    qDebug() << "image loaded from file, image size: " << HPDF_Image_GetWidth(image) << "-" << HPDF_Image_GetHeight(image);
+
+
+    snprintf(print_text, sizeof(char) * 256, "%s (%.0f dpi)", text, dpi);
+    /* Draw image to the canvas. */
+    if (strstr(filename, ".bmp")) {
+        HPDF_Page_DrawImage(page, image, x, y, HPDF_Image_GetWidth(image)*72.0/dpi, HPDF_Image_GetHeight(image)*72.0/dpi);
+    }
+    else {
+        HPDF_Page_DrawImage(page, image, x, y, HPDF_Image_GetWidth(image)*72.0/dpi, HPDF_Image_GetHeight(image)*72.0/dpi);
+    }
+    /* Print the text. */
+    HPDF_Page_BeginText (page);
+    HPDF_Page_SetTextLeading (page, 16);
+    HPDF_Page_MoveTextPos (page, x, y);
+    HPDF_Page_ShowTextNextLine (page, filename);
+    HPDF_Page_ShowTextNextLine (page, print_text);
+    HPDF_Page_EndText (page);
 }
 
 
@@ -196,6 +247,9 @@ int PDFUtil::generatePdf(QString data) {
     }
 
     HPDF_Page_EndText (page);
+
+    draw_image (pdf, "ABCD1234.png", 50, HPDF_Page_GetHeight (page) - 150, 600,"1bit grayscale.");
+
 
     /* save the document to a file */
     HPDF_SaveToFile (pdf, fname);
