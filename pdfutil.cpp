@@ -195,6 +195,7 @@ int PDFUtil::generatePdf(QString data) {
         fsize *= 1.5;
     }
 
+    HPDF_Page_EndText (page);
 
     /* save the document to a file */
     HPDF_SaveToFile (pdf, fname);
