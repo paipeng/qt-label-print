@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,7 +19,9 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::generatePDF() {
-    qDebug() << "generatePDF";
-    pdfUtil.generatePdf("test abc");
+    qDebug() << "generatePDF: " << QDir::currentPath();
 
+    int ret = pdfUtil.generatePdf("test abc");
+
+    qDebug() << "generatePdf ret: " << ret;
 }
