@@ -39,3 +39,10 @@ INCLUDEPATH += $$PWD/../../C/libharu/build_mac/include
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../C/libharu/build_mac/src -lhpdf
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../qt-smartcard/debug/ -lqt-smartcard
 else:unix: LIBS += -L$$PWD/../../C/libharu/build_mac/src -lhpdf
+
+
+INCLUDEPATH += $$PWD/../../C/zxing-cpp/core/src
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../C/zxing-cpp/build_mac/core -lZXing.1.2.0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../C/zxing-cpp/build_mac/core -lZXing.1.2.0
+else:unix: LIBS += -L$$PWD/../../C/zxing-cpp/build_mac/core -lZXing.1.2.0

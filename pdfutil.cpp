@@ -9,7 +9,25 @@
 #include "hpdf.h"
 #include <QDebug>
 
+
+#include "BarcodeFormat.h"
+#include "BitMatrix.h"
+#include "MultiFormatWriter.h"
+#include "TextUtfEncoding.h"
+#include "CharacterSetECI.h"
+
+
+#include <algorithm>
+#include <cctype>
+#include <cstring>
+#include <iostream>
+#include <string>
+
+
 jmp_buf env;
+
+
+using namespace ZXing;
 
 void error_handler (HPDF_STATUS   error_no,
                HPDF_STATUS   detail_no,
@@ -160,6 +178,7 @@ int PDFUtil::generatePdf(QString data) {
     float rad2;
 
     float ypos;
+    HPDF_Image image;
 
     strcpy (fname, "qt_text_pdf_test");
     strcat (fname, ".pdf");
@@ -281,7 +300,50 @@ int PDFUtil::generatePdf(QString data) {
 
     //draw_image (pdf, "ABCD1234.bmp", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
 
-    draw_image (pdf, "DE22D4049EDA4886BD9C25AF255A4D6F.png", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
+    //draw_image (pdf, "DE22D4049EDA4886BD9C25AF255A4D6F.png", 10, HPDF_Page_GetHeight (page) - 50, 1200, "1bit grayscale.");
+
+
+
+    int width = 100, height = 100;
+    int margin = 10;
+    int eccLevel = 8;
+    CharacterSet encoding = CharacterSet::Unknown;
+    std::string text, filePath;
+    BarcodeFormat format = BarcodeFormat::QRCode;
+
+
+    try {
+        auto writer = MultiFormatWriter(format).setMargin(margin).setEncoding(encoding).setEccLevel(eccLevel);
+        auto bitmap = ToMatrix<uint8_t>(writer.encode(TextUtfEncoding::FromUtf8(data.toStdString()), width, height));
+        qDebug() << "bitmap writer: " << bitmap.data();
+        /*
+        auto ext = GetExtension(filePath);
+        int success = 0;
+        if (ext == "" || ext == "png") {
+            success = stbi_write_png(filePath.c_str(), bitmap.width(), bitmap.height(), 1, bitmap.data(), 0);
+        } else if (ext == "jpg" || ext == "jpeg") {
+            success = stbi_write_jpg(filePath.c_str(), bitmap.width(), bitmap.height(), 1, bitmap.data(), 0);
+        }
+
+        if (!success) {
+            std::cerr << "Failed to write image: " << filePath << std::endl;
+            return -1;
+        }
+        */
+
+
+        image = HPDF_LoadRawImageFromMem (pdf, bitmap.data(), width, height, HPDF_CS_DEVICE_GRAY, 8);
+        HPDF_Page_DrawImage (page, image, 10, HPDF_Page_GetHeight (page) - 70, 50, 50);
+
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
+
+
+
+
+
 
     draw_line(page, 5,5,5, HPDF_Page_GetHeight (page) -5, 1);
     draw_line(page, HPDF_Page_GetWidth(page) - 5, 5,HPDF_Page_GetWidth(page) - 5, HPDF_Page_GetHeight (page) -5, 1);

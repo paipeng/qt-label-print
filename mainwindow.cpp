@@ -27,7 +27,8 @@ MainWindow::~MainWindow()
 void MainWindow::generatePDF() {
     qDebug() << "generatePDF: " << QDir::currentPath();
 
-    int ret = pdfUtil.generatePdf("test abc");
+
+    int ret = pdfUtil.generatePdf(ui->inputLineEdit->text());
 
     qDebug() << "generatePdf ret: " << ret;
 
