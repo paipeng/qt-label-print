@@ -27,6 +27,19 @@
      <string>generate_pdf</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="printPushButton">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>80</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>print</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -58,8 +71,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>printPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>print()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>696</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>generatePDF()</slot>
+  <slot>print()</slot>
  </slots>
 </ui>

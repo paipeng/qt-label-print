@@ -20,6 +20,7 @@ public:
 
 private slots:
     void generatePDF();
+    void print();
 
 
 private:

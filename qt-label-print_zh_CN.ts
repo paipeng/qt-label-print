@@ -13,5 +13,10 @@
         <source>generate_pdf</source>
         <translation type="unfinished">生成PDF</translation>
     </message>
+    <message>
+        <location filename="mainwindow.ui" line="40"/>
+        <source>print</source>
+        <translation type="unfinished">打印</translation>
+    </message>
 </context>
 </TS>
